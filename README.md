@@ -11,7 +11,7 @@ mkdir data
 ln -s path/to/pvqa/ data/pvqa
 cp -r saved/lxmert data/
 ```
-
+cd
 ## Running the code
 
 ### Pre-trained models
@@ -27,10 +27,10 @@ wget https://nlp.cs.unc.edu/data/model_LXRT.pth -P snap/pretrained
 Run :
 ```bash
 cd LXMERT
-python pvqa.py \
+python PVQA.py \
       --train train --valid val  \
       --llayers 9 --xlayers 5 --rlayers 5 \
-      --loadLXMERT snap/pretrained/ \
-      --batchSize 32 --optim bert --lr 5e-5 --epochs 5 \
+      --loadLXMERT snap/pretrained/model \
+      --batchSize 32 --optim bert --lr 5e-5 --epochs 1 \
       --tqdm --output snap/output
 ```
