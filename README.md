@@ -34,3 +34,13 @@ python PVQA.py \
       --batchSize 32 --optim bert --lr 5e-5 --epochs 1 \
       --tqdm --output snap/output
 ```
+
+```bash
+cd LXMERT
+mkdir -p snap/output_test
+python PVQA.py \
+      --test test  --train val --valid " " \
+      --load snap/output/BEST \
+      --llayers 9 --xlayers 5 --rlayers 5 \
+      --batchSize 32 --optim bert --lr 5e-5 --epochs 4 \
+      --tqdm --output snap/output_test

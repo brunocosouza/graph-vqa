@@ -15,13 +15,13 @@ from src.pretrain.qa_answer_table import load_lxmert_qa
 from src.parameters import args
 from PVQAModel import PVQAModel
 
-from  Dataset import PVQADataset, PVQATorchDataset, PVQAEvaluator
-
+from Dataset import PVQADataset, PVQATorchDataset, PVQAEvaluator
 
 
 DataTuple = collections.namedtuple("DataTuple", 'dataset loader evaluator')
 
-def get_data_tuple(splits: str, bs:int, shuffle=False, drop_last=False) -> DataTuple:
+
+def get_data_tuple(splits: str, bs: int, shuffle=False, drop_last=False) -> DataTuple:
     dset = PVQADataset(splits)
     tset = PVQATorchDataset(dset)
     evaluator = PVQAEvaluator(dset)
@@ -34,7 +34,6 @@ def get_data_tuple(splits: str, bs:int, shuffle=False, drop_last=False) -> DataT
     return DataTuple(dataset=dset, loader=data_loader, evaluator=evaluator)
 
 
-
 class PVQA:
     def __init__(self):
         # datasets
@@ -42,7 +41,7 @@ class PVQA:
         self.train_tuple = get_data_tuple(
             splits=args.train, bs=args.batch_size, shuffle=True, drop_last=True
         )
-        if args.valid != "":
+        if args.valid != " ":
             self.valid_tuple = get_data_tuple(
                 splits=args.valid, bs=args.batch_size,
                 shuffle=False, drop_last=False
@@ -84,7 +83,8 @@ class PVQA:
 
     def train(self, train_tuple, eval_tuple):
         dset, loader, evaluator = train_tuple
-        iter_wrapper = (lambda x: tqdm(x, total=len(loader))) if args.tqdm else (lambda x: x)
+        iter_wrapper = (lambda x: tqdm(x, total=len(loader))
+                        ) if args.tqdm else (lambda x: x)
 
         best_valid = 0.
         for epoch in range(args.epochs):
@@ -109,7 +109,8 @@ class PVQA:
                     ans = dset.label2ans[l]
                     quesid2ans[qid.item()] = ans
 
-            log_str = "\nEpoch %d: Train %0.2f\n" % (epoch, evaluator.evaluate(quesid2ans) * 100.)
+            log_str = "\nEpoch %d: Train %0.2f\n" % (
+                epoch, evaluator.evaluate(quesid2ans) * 100.)
 
             if self.valid_tuple is not None:  # Do Validation
                 valid_score = self.evaluate(eval_tuple)
@@ -117,16 +118,17 @@ class PVQA:
                     best_valid = valid_score
                     self.save("BEST")
 
-                log_str += "Epoch %d: Valid %0.2f\n" % (epoch, valid_score * 100.) +                            "Epoch %d: Best %0.2f\n" % (epoch, best_valid * 100.)
+                log_str += "Epoch %d: Valid %0.2f\n" % (
+                    epoch, valid_score * 100.) + "Epoch %d: Best %0.2f\n" % (epoch, best_valid * 100.)
 
             print(log_str, end='')
 
             with open(self.output + "/log.log", 'a') as f:
                 f.write(log_str)
                 f.flush()
-                
+
         self.save("LAST")
-        
+
     def predict(self, eval_tuple: DataTuple, dump=None):
         """
         Predict the answers to questions in a data split.
@@ -139,7 +141,8 @@ class PVQA:
         dset, loader, evaluator = eval_tuple
         quesid2ans = {}
         for i, datum_tuple in enumerate(loader):
-            ques_id, feats, boxes, sent = datum_tuple[:4]  # Avoid seeing ground truth
+            # Avoid seeing ground truth
+            ques_id, feats, boxes, sent = datum_tuple[:4]
             with torch.no_grad():
                 feats, boxes = feats.cuda(), boxes.cuda()
                 logit = self.model(feats, boxes, sent)
@@ -176,40 +179,48 @@ class PVQA:
         state_dict = torch.load("%s.pth" % path)
         self.model.load_state_dict(state_dict)
 
-
+print(args.test)
+print(args.valid)
+valid_bs = 32
 pvqa = PVQA()
+
 
 if args.load is not None:
     pvqa.load(args.load)
 
-### Test
+# Test
 if args.test is not None:
     if 'test' in args.test:
-        pvqa.predict(
-                        get_data_tuple(args.valid, bs=32,
-                                    shuffle=False, drop_last=False),
-                        dump=os.path.join(args.output, 'test_predict.json'))
-        print(result)
-        with open(args.output + "/log.log", 'a') as f:
-                f.write('test result=' + str(result))
-                f.flush()
-    
-    elif 'val' in args.test:
             result = pvqa.evaluate(
-                    get_data_tuple('test', bs=32,
-                                shuffle=False, drop_last=False),
-                    dump=os.path.join(args.output, 'test_predict.json')
-                )
+                get_data_tuple(args.test, bs=valid_bs,
+                               shuffle=False, drop_last=False),
+                dump=os.path.join(args.output, 'test_predict.json')
+            )
             print(result)
             with open(args.output + "/log.log", 'a') as f:
                 f.write('test result=' + str(result))
                 f.flush()
-        
+
+    elif 'val' in args.test:
+            ## NOT USED
+            # Since part of valididation data are used in pre-training/fine-tuning,
+            # only validate on the minival set.
+            result = pvqa.evaluate(
+                get_data_tuple('test', bs=valid_bs,
+                               shuffle=False, drop_last=False),
+                dump=os.path.join(args.output, 'test_predict.json')
+            )
+            print(result)
+            with open(args.output + "/log.log", 'a') as f:
+                f.write('test result=' + str(result))
+                f.flush()
+
 else:
     print('Splits in Train data:', pvqa.train_tuple.dataset.splits)
     if pvqa.valid_tuple is not None:
         print('Splits in Valid data:', pvqa.valid_tuple.dataset.splits)
-        print("Valid Oracle: %0.2f" % (pvqa.oracle_score(pvqa.valid_tuple) * 100))
+        print("Valid Oracle: %0.2f" %
+              (pvqa.oracle_score(pvqa.valid_tuple) * 100))
     else:
         print("DO NOT USE VALIDATION")
     pvqa.train(pvqa.train_tuple, pvqa.valid_tuple)
