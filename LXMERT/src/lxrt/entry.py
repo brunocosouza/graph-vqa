@@ -8,7 +8,7 @@ import torch.nn as nn
 
 from src.lxrt.tokenization import BertTokenizer
 from src.lxrt.modeling import LXRTFeatureExtraction as VisualBertForLXRFeature, VISUAL_CONFIG
-from src.parametros import args
+from src.parameters import args
 
 
 class InputFeatures(object):
@@ -59,9 +59,9 @@ def convert_sents_to_features(sents, max_seq_length, tokenizer):
 
 
 def set_visual_config(args):
-    VISUAL_CONFIG.l_layers = args.get("llayers")
-    VISUAL_CONFIG.x_layers = args.get("xlayers")
-    VISUAL_CONFIG.r_layers = args.get("rlayers")
+    VISUAL_CONFIG.l_layers = args.llayers
+    VISUAL_CONFIG.x_layers = args.xlayers
+    VISUAL_CONFIG.r_layers = args.rlayers
 
 
 class LXRTEncoder(nn.Module):
@@ -82,7 +82,7 @@ class LXRTEncoder(nn.Module):
             mode=mode
         )
 
-        if args.get("from_scratch"):
+        if args.from_scratch:
             print("initializing all the weights")
             self.model.apply(self.model.init_bert_weights)
 

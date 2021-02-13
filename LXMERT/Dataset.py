@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[41]:
-
 
 # coding=utf-8
 
@@ -19,8 +17,8 @@ from torch.utils.data import Dataset
 import re
 from sklearn.metrics import f1_score
 from nltk.translate.bleu_score import sentence_bleu
-from src.parametros import args
-# In[15]:
+from src.parameters import args
+
 
 question_types = ('where', 'what', 'how', 'how many/how much', 'when', 'why', 'who/whose', 'other', 'yes/no')
 FIELDNAMES = ['image_id', 'image_w', 'image_h', 'num_boxes', 'boxes', 'features']
@@ -103,10 +101,6 @@ class PVQADataset:
     def __len__(self):
         return len(self.data)
 
-
-# In[16]:
-
-
 class PVQATorchDataset(Dataset):
     def __init__(self, dataset: PVQADataset):
         super(PVQATorchDataset, self).__init__()
@@ -161,10 +155,6 @@ class PVQATorchDataset(Dataset):
             return ques_id, feats, boxes, ques, target
         else:
             return ques_id, feats, boxes, ques
-
-
-# In[30]:
-
 
 class PVQAEvaluator:
     def __init__(self, dataset: PVQADataset):
@@ -230,7 +220,7 @@ class PVQAEvaluator:
         for q_type in question_types:
             info += 'qtype: %s\t score=%.4f\n' % (q_type, qtype_score[q_type])
 
-        with open(os.path.join(args.get("output"), 'result_by_type.txt'), 'a') as f:
+        with open(os.path.join(args.output, 'result_by_type.txt'), 'a') as f:
             f.write(info)
         print(info)
         return score / len(quesid2ans)
@@ -256,4 +246,3 @@ class PVQAEvaluator:
                     'answer': ans
                 })
             json.dump(result, f, indent=4, sort_keys=True)
-

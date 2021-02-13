@@ -31,7 +31,7 @@ python PVQA.py \
       --train train --valid val  \
       --llayers 9 --xlayers 5 --rlayers 5 \
       --loadLXMERT snap/pretrained/model \
-      --batchSize 32 --optim bert --lr 5e-5 --epochs 1 \
+      --batchSize 32 --optim bert --lr 5e-5 --epochs 20 \
       --tqdm --output snap/output
 ```
 

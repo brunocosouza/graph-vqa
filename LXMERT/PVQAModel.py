@@ -1,21 +1,16 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
-
-
 from torch import nn
-
-
-# In[4]:
-
 
 from src.lxrt.tokenization import BertTokenizer
 from src.lxrt.modeling import LXRTFeatureExtraction as VisualBertForLXRFeature, VISUAL_CONFIG
 
+import torch.nn as nn
 
-# In[5]:
-
+from src.parameters import args
+from src.lxrt.entry import LXRTEncoder as LXRTEncoder_e
+from src.lxrt.modeling import BertLayerNorm, GeLU
 
 class LXRTEncoder(nn.Module):
     def __init__(self, args, max_seq_length, mode='x'):
@@ -92,17 +87,6 @@ class LXRTEncoder(nn.Module):
         self.model.load_state_dict(state_dict, strict=False)
 
 
-# In[6]:
-
-
-# coding=utf-8
-
-import torch.nn as nn
-
-from src.parametros import args
-from src.lxrt.entry import LXRTEncoder
-from src.lxrt.modeling import BertLayerNorm, GeLU
-
 # Max length including <bos> and <eos>
 MAX_PVQA_LENGTH = 20
 
@@ -112,7 +96,7 @@ class PVQAModel(nn.Module):
 
         # Build LXRT encoder
         # lxrt.entry.LXRTEncoder -> LXRTFeatureExtraction -> LXRTModel
-        self.lxrt_encoder = LXRTEncoder(
+        self.lxrt_encoder = LXRTEncoder_e(
             args,
             max_seq_length=MAX_PVQA_LENGTH
         )
@@ -141,10 +125,3 @@ class PVQAModel(nn.Module):
         logit = self.logit_fc(x)
 
         return logit
-
-
-# In[ ]:
-
-
-
-

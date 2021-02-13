@@ -78,7 +78,7 @@ class PVQA:
             self.optim = args.optimizer(self.model.parameters(), args.lr)
 
         # Output Directory
-        self.output = 'snap/output'
+        self.output =  args.output
         os.makedirs(self.output, exist_ok=True)
 
     def train(self, train_tuple, eval_tuple):
@@ -179,8 +179,6 @@ class PVQA:
         state_dict = torch.load("%s.pth" % path)
         self.model.load_state_dict(state_dict)
 
-print(args.test)
-print(args.valid)
 valid_bs = 32
 pvqa = PVQA()
 

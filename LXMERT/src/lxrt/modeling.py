@@ -17,7 +17,7 @@ import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss, SmoothL1Loss
 
-from src.parametros import args
+from src.parameters import args
 
 from .file_utils import cached_path
 
@@ -998,7 +998,7 @@ class LXRTPretraining(BertPreTrainedModel):
         # qa = False
         # if self.task_qa:
         #     qa = True
-        if args.get("task_qa"):
+        if args.task_qa:
             (lang_output, visn_output), pooled_output = self.bert(
                 input_ids, token_type_ids, attention_mask,
                 visual_feats=(visual_feats, pos), t='vqa',
@@ -1008,7 +1008,7 @@ class LXRTPretraining(BertPreTrainedModel):
 
         # may need some change
         # img ~ question match
-        if args.get("task_matched"):
+        if args.task_matched:
             (lang_output_vq, visn_output_vq), pooled_output_vq = self.bert(
                 input_ids_rps, token_type_ids_rps, attention_mask_rps,
                 visual_feats=(visual_feats, pos), t='vqa',
@@ -1017,7 +1017,7 @@ class LXRTPretraining(BertPreTrainedModel):
             lang_prediction_scores_vq, cross_relationship_score_vq = self.cls(lang_output_vq, pooled_output_vq)
 
         # question -> answer
-        if args.get("task_qa_woi"):
+        if args.task_qa_woi:
             (lang_output_qa_woi, visn_output_qa_woi), pooled_output_qa_woi = self.bert(
                 input_ids, token_type_ids, attention_mask,
                 visual_feats=(visual_feats, pos), t='qa_woi',
@@ -1027,7 +1027,7 @@ class LXRTPretraining(BertPreTrainedModel):
             #     lang_output_qa_woi, pooled_output_qa_woi)
 
         # img ~ answer match
-        if args.get("task_va"):
+        if args.task_va:
             (lang_output_va, visn_output_va), pooled_output_va = self.bert(
                 input_ids_a_rps, token_type_ids_a_rps, attention_mask_a_rps,
                 visual_feats=(visual_feats, pos), t='va',
@@ -1036,26 +1036,26 @@ class LXRTPretraining(BertPreTrainedModel):
             lang_prediction_scores_va, cross_relationship_score_va = self.cls(lang_output_va, pooled_output_va)
 
         # img -> answer, answer head classifier, implementation2
-        if self.get("task_va2"):
+        if self.task_va2:
             (lang_output_va2, visn_output_va2), pooled_output_va2 = self.bert(
                 input_ids, token_type_ids, attention_mask,
                 visual_feats=(visual_feats, pos), t='va2',
             )
 
-        if self.get("task_qa"):
+        if self.task_qa:
             answer_score = self.answer_head(pooled_output)
         else:
             # This answer_score would not be used anywhere,
             # just to keep a constant return function signature.
             pass  # answer_score = pooled_output[0][0]
 
-        if self.get("task_qa_woi"):
+        if self.task_qa_woi:
             answer_score_qa_woi = self.question_answer_head(pooled_output_qa_woi)
             # print('answer_score_qa_woi.shape:', answer_score_qa_woi.shape)
         else:
             pass  # answer_score_qa_woi = pooled_output[0][0]
 
-        if self.get("task_va2"):
+        if self.task_va2:
             answer_score_va2 = self.visual_answer_head(pooled_output_va2)
             # print('answer_score_va2.shape:', answer_score_va2.shape)
         else:
@@ -1076,12 +1076,12 @@ class LXRTPretraining(BertPreTrainedModel):
                 cross_relationship_score_vq.view(-1, 2),
                 matched_label.view(-1)
             )
-            matched_loss *= args.get("vq_w")  # weight of multi task
+            matched_loss *= args.vq_w  # weight of multi task
             total_loss += matched_loss
             losses += (matched_loss.detach(),)
         if matched_label_ans is not None and self.task_va:
             ans_rps_valid_idx = (ans_rps_types.view(-1) == 0)
-            if args.get("yesno"):
+            if args.yesno:
                 va_loss = loss_fct(
                     cross_relationship_score_va.view(-1, 2),
                     matched_label_ans.view(-1)
@@ -1091,7 +1091,7 @@ class LXRTPretraining(BertPreTrainedModel):
                     cross_relationship_score_va.view(-1, 2)[ans_rps_valid_idx],
                     matched_label_ans.view(-1)[ans_rps_valid_idx]
                 )
-            va_loss *= args.get("va_w")  # weight for multi pretrain task
+            va_loss *= args.va_w  # weight for multi pretrain task
             total_loss += va_loss
             losses += (va_loss.detach(),)
         if obj_labels is not None and self.task_obj_predict:
@@ -1127,7 +1127,7 @@ class LXRTPretraining(BertPreTrainedModel):
             # Now     : (loss *1) for 12 epochs
             #
             # * 2       # Multiply by 2 because > half of the data will not have label
-            answer_loss *= args.get("vqa_w")  # weight for multiple pretrain tasks
+            answer_loss *= args.vqa_w  # weight for multiple pretrain tasks
             total_loss += answer_loss
             losses += (answer_loss.detach(),)
 
@@ -1136,13 +1136,13 @@ class LXRTPretraining(BertPreTrainedModel):
                 answer_score_qa_woi.view(-1, self.num_answers),
                 ans.clone().view(-1)
             )
-            answer_loss_qa_woi *= args.get("qa_w")  # weight for multi pretrain tasks
+            answer_loss_qa_woi *= args.qa_w  # weight for multi pretrain tasks
             total_loss += answer_loss_qa_woi
             losses += (answer_loss_qa_woi.detach(),)
 
         if ans is not None and self.task_va2:
             ans_valid_idx = (ans_types.view(-1) == 0)
-            if args.get("yesno"):
+            if args.yesno:
                 answer_loss_va2 = loss_fct(
                     answer_score_va2.view(-1, self.num_answers),
                     ans.clone().view(-1)
@@ -1152,7 +1152,7 @@ class LXRTPretraining(BertPreTrainedModel):
                     answer_score_va2.view(-1, self.num_answers)[ans_valid_idx],
                     ans.clone().view(-1)[ans_valid_idx]
                 )
-            answer_loss_va2 *= args.get("va_w")  # weight for multi pretrain tasks
+            answer_loss_va2 *= args.va_w  # weight for multi pretrain tasks
             total_loss += answer_loss_va2
             losses += (answer_loss_va2.detach(),)
         if self.task_qa:
@@ -1179,7 +1179,7 @@ class LXRTFeatureExtraction(BertPreTrainedModel):
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, visual_feats=None,
                 visual_attention_mask=None):
-        t = 'qa_woi' if args.get("qa_bl") else 'vqa'
+        t = 'qa_woi' if args.qa_bl else 'vqa'
         feat_seq, pooled_output = self.bert(input_ids, token_type_ids, attention_mask,
                                             visual_feats=visual_feats,
                                             visual_attention_mask=visual_attention_mask,
