@@ -8,11 +8,7 @@ This repository is based on and inspired by @hengyuan-hu's [work](https://github
 
 ## Prerequisites
 
-You may need a machine with 4 GPUs with 16GB memory each, and PyTorch v1.0.1 for Python 3.
-
-1. Install [PyTorch](http://pytorch.org/) with CUDA10.0 and Python 3.7.
-2. Install [h5py](http://docs.h5py.org/en/latest/build.html).
-3. Install [block.bootstrap.pytorch](https://github.com/Cadene/block.bootstrap.pytorch).
+1. Install [PyTorch](http://pytorch.org/)
 
 ## Data
 
