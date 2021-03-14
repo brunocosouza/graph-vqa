@@ -10,10 +10,6 @@ This repository is based on and inspired by @hengyuan-hu's [work](https://github
 
 1. Install [PyTorch](http://pytorch.org/)
 
-## Data
-
-Our implementation uses the pretrained features from [bottom-up-attention](https://github.com/peteanderson80/bottom-up-attention), the adaptive 10-100 features per image. In addition to this, the GloVe vectors and Visual Genome question answer pairs. For your convenience, the below script helps you to download preprocessed data.
-
 ## Training and Evaluating
 
 ```bash
