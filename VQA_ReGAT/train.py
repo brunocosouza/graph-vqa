@@ -173,9 +173,6 @@ def train(model, train_loader, eval_loader, test_loader, args, device=torch.devi
             logger.write('\ttest score: %.2f'
                          % (100 * test_score))
 
-
-
-
 @torch.no_grad()
 def evaluate(model, dataloader, device, args):
     model.eval()
@@ -253,16 +250,6 @@ def test_evaluate(model, dataloader, args, device):
             batch_score = base_scores.sum()
             score += batch_score
             scores.append(base_scores.detach().cpu().numpy().sum(-1))
-            breakpoint()
-
-    def compute_score_with_logits(logits, labels, device):
-    # argmax
-    logits = torch.max(logits, 1)[1].data
-    logits = logits.view(-1, 1)
-    one_hots = torch.zeros(*labels.size()).to(device)
-    one_hots.scatter_(1, logits, 1)
-    scores = (one_hots * labels)
-    return scores
 
         qid = qid.cpu()
         pred = pred.cpu()
@@ -275,7 +262,6 @@ def test_evaluate(model, dataloader, args, device):
         json.dump(results, open(save_to, "w"))
 
     scores = np.concatenate(scores).ravel()
-    breakpoint()
 
     qtype_score = {qtype: 0. for qtype in question_types}
     qtype_cnt = {qtype: 0 for qtype in question_types}
@@ -284,7 +270,6 @@ def test_evaluate(model, dataloader, args, device):
         qtype = get_q_type(entry['question'])
         qtype_cnt[qtype] += 1
         qtype_score[qtype] += scores[i]
-        breakpoint()
 
     with open(os.path.join(args.output, 'type_result.txt'), 'w') as f:
         info = str(datetime.datetime.now())
