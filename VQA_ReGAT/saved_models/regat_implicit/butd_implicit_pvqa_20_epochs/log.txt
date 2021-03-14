@@ -1,0 +1,102 @@
+nParams=	32614483
+optim: adamax lr=0.0010, decay_step=2, decay_rate=0.20,grad_clip=0.25
+LR decay epochs: 
+gradual warmup lr: 0.0005
+epoch 0, time: 58.19
+	train_loss: 50.85, norm: 66.9296, score: 29.18
+	eval score: 41.98 (100.00)
+saving current model weights to folder
+gradual warmup lr: 0.0010
+epoch 1, time: 56.17
+	train_loss: 4.12, norm: 8.1972, score: 42.12
+	eval score: 43.83 (100.00)
+saving current model weights to folder
+gradual warmup lr: 0.0015
+epoch 2, time: 63.48
+	train_loss: 3.82, norm: 5.0050, score: 44.50
+	eval score: 45.17 (100.00)
+saving current model weights to folder
+gradual warmup lr: 0.0020
+epoch 3, time: 61.15
+	train_loss: 3.62, norm: 3.7014, score: 46.48
+	eval score: 48.10 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 4, time: 58.41
+	train_loss: 3.37, norm: 3.1599, score: 50.73
+	eval score: 49.28 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 5, time: 59.11
+	train_loss: 3.15, norm: 2.9637, score: 53.62
+	eval score: 51.12 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 6, time: 59.57
+	train_loss: 2.95, norm: 2.8469, score: 56.32
+	eval score: 51.79 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 7, time: 61.32
+	train_loss: 2.76, norm: 2.8249, score: 58.87
+	eval score: 52.76 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 8, time: 60.01
+	train_loss: 2.57, norm: 2.7916, score: 61.06
+	eval score: 52.89 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 9, time: 59.57
+	train_loss: 2.41, norm: 3.0815, score: 62.67
+	eval score: 53.93 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 10, time: 60.36
+	train_loss: 2.26, norm: 2.8846, score: 64.76
+	eval score: 54.77 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 11, time: 63.90
+	train_loss: 2.11, norm: 2.9750, score: 66.15
+	eval score: 55.31 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 12, time: 63.12
+	train_loss: 1.98, norm: 3.0159, score: 67.71
+	eval score: 55.50 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 13, time: 59.33
+	train_loss: 1.87, norm: 3.2280, score: 69.24
+	eval score: 56.19 (100.00)
+saving current model weights to folder
+lr: 0.0020
+epoch 14, time: 59.29
+	train_loss: 1.76, norm: 3.0531, score: 70.44
+	eval score: 55.31 (100.00)
+decreased lr: 0.0004
+epoch 15, time: 60.27
+	train_loss: 1.57, norm: 2.8862, score: 73.35
+	eval score: 56.30 (100.00)
+saving current model weights to folder
+lr: 0.0004
+epoch 16, time: 66.86
+	train_loss: 1.51, norm: 2.8699, score: 74.06
+	eval score: 56.54 (100.00)
+saving current model weights to folder
+lr: 0.0004
+epoch 17, time: 69.93
+	train_loss: 1.46, norm: 2.9168, score: 75.04
+	eval score: 56.57 (100.00)
+saving current model weights to folder
+lr: 0.0004
+epoch 18, time: 67.52
+	train_loss: 1.42, norm: 3.0019, score: 75.65
+	eval score: 56.35 (100.00)
+decreased lr: 0.0001
+epoch 19, time: 62.74
+	train_loss: 1.37, norm: 2.9789, score: 76.72
+	eval score: 55.79 (100.00)
+Final epoch 19, time: 62.74, test evaluation
+	test score: 78.72
